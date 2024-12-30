@@ -12,7 +12,6 @@ class Scene {
     public:
         Scene(): fractal(NULL), camera(NULL){}
         Scene(Fractal *fractal, Camera *camera, Renderer *renderer): fractal(fractal), camera(camera), renderer(renderer){
-            this->camera->setScene(this);
             this->renderer->setScene(this);
         }
 

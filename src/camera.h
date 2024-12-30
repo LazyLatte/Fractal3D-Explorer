@@ -4,12 +4,10 @@
 #include <glm/gtc/quaternion.hpp>
 #include <GL/glew.h>
 
-class Scene;
 class Camera {
     private:
         glm::vec3 pos;
         glm::vec3 front; //unit vector
-        Scene *scene;
     public:
         float speed;
         glm::vec3 dir;
@@ -18,9 +16,6 @@ class Camera {
         void move(glm::vec3 d);
         void rotate(glm::vec2 dir);
         void rotate(glm::vec3 axis, float rad);
-        void setScene(Scene *scene){
-            this->scene = scene;
-        }
         glm::vec3 getVelocity();
         glm::vec3 getPos() const {
             return this->pos;
@@ -29,5 +24,5 @@ class Camera {
             return this->front;
         }
 };
-#include "scene.h"
+
 #endif

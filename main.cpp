@@ -5,9 +5,11 @@
 #include <cassert>
 #include <vector>
 
+#define GLM_FORCE_SWIZZLE
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
+
 #include <glm/gtx/matrix_transform_2d.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -21,6 +23,7 @@
 #include "scene.h"
 #include "renderers/mandelbox_renderer.h"
 #include "renderers/mandelbulb_renderer.h"
+#include "renderers/menger_renderer.h"
 #define deg2rad(x) ((x)*((3.1415926f)/(180.0f)))
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -30,9 +33,11 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void framebuffer_size_callback(GLFWwindow* window, int height, int width);
 
 Mandelbox *mbox;
-MandelboxRenderer *mbox_renderer;
 Mandelbulb *mbulb;
+Menger *menger;
+MandelboxRenderer *mbox_renderer;
 MandelbulbRenderer *mbulb_renderer;
+MengerRenderer *menger_renderer;
 Camera *camera;
 Scene *scene;
 const GLuint WIDTH = 640, HEIGHT = 360;
@@ -80,12 +85,15 @@ int main(int argc, char** argv){
 
     mbulb = new Mandelbulb();
     mbulb_renderer = new MandelbulbRenderer(mbulb, HEIGHT, WIDTH);
+
+    menger = new Menger();
+    menger_renderer = new MengerRenderer(menger, HEIGHT, WIDTH);
+
     camera = new Camera(glm::vec3(0.0, 0.0, 4.0), glm::vec3(0.0, 0.0, -1.0));
     //scene = new Scene(mbox, camera, mbox_renderer);
-    scene = new Scene(mbulb, camera, mbulb_renderer);
+    //scene = new Scene(mbulb, camera, mbulb_renderer);
+    scene = new Scene(menger, camera, menger_renderer);
     float prevTime = 0.0;
-    //std::cout << std::setprecision(15) << static_cast<float>((float)2.00000429153442 + (float)-1.04987442739457e-07) <<std::endl;
-    //std::cout << std::setprecision(15) << static_cast<double>((double)2.00000429153442 + (double)-1.04987442739457e-07) <<std::endl;
     float curTime = -1.0f;
     while (!glfwWindowShouldClose(window)){
         
@@ -129,8 +137,12 @@ int main(int argc, char** argv){
     ImGui::DestroyContext();
 
     delete mbox;
-    delete camera;
+    delete mbulb;
+    delete menger;
     delete mbox_renderer;
+    delete mbulb_renderer;
+    delete menger_renderer;
+    delete camera;
     delete scene;
 
 }

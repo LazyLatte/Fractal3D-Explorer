@@ -55,6 +55,7 @@ Renderer::Renderer(const char *fs_filename, int height, int width){
 }
 
 void Renderer::draw(float t) const {
+    glUseProgram(this->program);
     glUniform1f(this->iTime_location, t);
     glUniform3fv(this->pos_location, 1, &(this->scene->getCamera()->getPos()[0]));
     glUniform3fv(this->front_location, 1,  &(this->scene->getCamera()->getFront()[0]));
