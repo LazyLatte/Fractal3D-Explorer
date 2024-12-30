@@ -4,7 +4,7 @@
 #include <iostream>
 #include <GL/glew.h>
 #include "renderer.h"
-#include "fractals/mandelbox.h"
+#include "../fractals/mandelbox.h"
 class MandelboxRenderer: public Renderer {
     private:
         Mandelbox *mbox;
@@ -13,7 +13,7 @@ class MandelboxRenderer: public Renderer {
         GLint fold_location;
     public:
         MandelboxRenderer(Mandelbox *mbox, unsigned height, unsigned width);
-        void draw(float t) const override;
+        void setUniformParameters() const override;
 };
 
 

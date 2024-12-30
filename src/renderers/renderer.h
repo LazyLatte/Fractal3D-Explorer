@@ -22,8 +22,9 @@ class Renderer {
     public:
         Renderer(const char *fs_filename, int height, int width);
         void setScene(Scene *scene);
-        virtual void draw(float t) const = 0;
+        virtual void setUniformParameters() const = 0;
+        void draw(float t) const;
 };
-#include "scene.h"
+#include "../scene.h"
 
 #endif

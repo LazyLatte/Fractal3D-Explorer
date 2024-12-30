@@ -1,13 +1,15 @@
 #include "renderer.h"
-
+#include <iostream>
 Renderer::Renderer(const char *fs_filename, int height, int width){
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    std::string shaderSource = readShaderCode("./shaders/vs.glsl");
+    std::string shaderDir = "./shaders/";
+    std::string shaderSource = readShaderCode(std::string(shaderDir + "vs.glsl").c_str());
     const GLchar* s[1];
     s[0] = shaderSource.c_str();
     glShaderSource(vertexShader, 1, s, NULL);
-    shaderSource = readShaderCode(fs_filename);
+
+    shaderSource = readShaderCode(std::string(shaderDir + fs_filename).c_str());
     s[0] = shaderSource.c_str();
     glShaderSource(fragmentShader, 1, s, NULL);
     
@@ -52,6 +54,15 @@ Renderer::Renderer(const char *fs_filename, int height, int width){
     this->iTime_location = glGetUniformLocation(this->program, "iTime");
 }
 
+void Renderer::draw(float t) const {
+    glUniform1f(this->iTime_location, t);
+    glUniform3fv(this->pos_location, 1, &(this->scene->getCamera()->getPos()[0]));
+    glUniform3fv(this->front_location, 1,  &(this->scene->getCamera()->getFront()[0]));
+
+    this->setUniformParameters();
+    glBindVertexArray(this->vao);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+}
 void Renderer::setScene(Scene *scene){
     this->scene = scene;
 }

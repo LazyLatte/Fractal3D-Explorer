@@ -19,7 +19,8 @@
 #include "imgui_impl_opengl3.h"
 
 #include "scene.h"
-#include "mandelbox_renderer.h"
+#include "renderers/mandelbox_renderer.h"
+#include "renderers/mandelbulb_renderer.h"
 #define deg2rad(x) ((x)*((3.1415926f)/(180.0f)))
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -29,7 +30,9 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void framebuffer_size_callback(GLFWwindow* window, int height, int width);
 
 Mandelbox *mbox;
-MandelboxRenderer *renderer;
+MandelboxRenderer *mbox_renderer;
+Mandelbulb *mbulb;
+MandelbulbRenderer *mbulb_renderer;
 Camera *camera;
 Scene *scene;
 const GLuint WIDTH = 640, HEIGHT = 360;
@@ -71,13 +74,15 @@ int main(int argc, char** argv){
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
     ImGui_ImplOpenGL3_Init();
-
-    mbox = new Mandelbox();
     //camera = new Camera(glm::vec3(0.5, 0, -0.25), glm::vec3(0.5, 0, -0.8));
-    camera = new Camera(glm::vec3(0.0, 0.0, 4.0), glm::vec3(0.0, 0.0, -1.0));
-    renderer = new MandelboxRenderer(mbox, HEIGHT, WIDTH);
-    scene = new Scene(mbox, camera, renderer);
+    mbox = new Mandelbox();
+    mbox_renderer = new MandelboxRenderer(mbox, HEIGHT, WIDTH);
 
+    mbulb = new Mandelbulb();
+    mbulb_renderer = new MandelbulbRenderer(mbulb, HEIGHT, WIDTH);
+    camera = new Camera(glm::vec3(0.0, 0.0, 4.0), glm::vec3(0.0, 0.0, -1.0));
+    //scene = new Scene(mbox, camera, mbox_renderer);
+    scene = new Scene(mbulb, camera, mbulb_renderer);
     float prevTime = 0.0;
     //std::cout << std::setprecision(15) << static_cast<float>((float)2.00000429153442 + (float)-1.04987442739457e-07) <<std::endl;
     //std::cout << std::setprecision(15) << static_cast<double>((double)2.00000429153442 + (double)-1.04987442739457e-07) <<std::endl;
@@ -125,7 +130,7 @@ int main(int argc, char** argv){
 
     delete mbox;
     delete camera;
-    delete renderer;
+    delete mbox_renderer;
     delete scene;
 
 }

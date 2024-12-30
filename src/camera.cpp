@@ -1,8 +1,5 @@
 #include "camera.h"
 #include <stdio.h>
-#include <iostream>
-#include <iomanip>
-const float step_multiplier = 0.2f;
 const float rotateFactor = 0.0008f;
 
 glm::vec3 Camera::getVelocity(){

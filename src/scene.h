@@ -2,7 +2,7 @@
 #define SCENE_H
 #include "camera.h"
 #include "fractals/fractal.h"
-#include "renderer.h"
+#include "renderers/renderer.h"
 
 class Scene {
     private:

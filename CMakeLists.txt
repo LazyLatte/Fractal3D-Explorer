@@ -13,6 +13,7 @@ file(GLOB SRC_FILES
     "${PROJECT_SOURCE_DIR}/src/*.h"
     "${PROJECT_SOURCE_DIR}/src/*/*.h"
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
+    "${PROJECT_SOURCE_DIR}/src/*/*.cpp"
 )
 add_executable(${PROJECT_NAME} main.cpp ${SRC_FILES})
 
