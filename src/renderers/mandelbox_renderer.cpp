@@ -15,3 +15,7 @@ void MandelboxRenderer::setUniformParameters() const {
 
     glUniform3fv(this->color_location, 1,  &(this->mbox->color.r));
 }
+
+float MandelboxRenderer::DE(glm::vec3 p) const {
+    return this->mbox->DE(p);
+}

@@ -15,3 +15,7 @@ void MengerRenderer::setUniformParameters() const {
 
     glUniform3fv(this->color_location, 1,  &(this->menger->color.r));
 }
+
+float MengerRenderer::DE(glm::vec3 p) const {
+    return this->menger->DE(p);
+}

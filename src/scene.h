@@ -6,12 +6,11 @@
 
 class Scene {
     private:
-        Fractal *fractal;
         Camera *camera;
         Renderer *renderer;
     public:
-        Scene(): fractal(NULL), camera(NULL){}
-        Scene(Fractal *fractal, Camera *camera, Renderer *renderer): fractal(fractal), camera(camera), renderer(renderer){
+        Scene(): camera(NULL){}
+        Scene(Camera *camera, Renderer *renderer): camera(camera), renderer(renderer){
             this->renderer->setScene(this);
         }
 
@@ -19,14 +18,11 @@ class Scene {
             glm::vec3 delta = this->camera->getVelocity() * dt;
             this->camera->move(delta);
             this->renderer->draw(t);
-            this->camera->speed = abs(this->fractal->DE(this->camera->getPos())) * 1.5f;
+            this->camera->speed = abs(this->renderer->DE(this->camera->getPos())) * 1.5f;
             
         }
         Camera *getCamera() const {
             return this->camera;
-        }
-        Fractal *getFractal() const {
-            return this->fractal;
         }
 };
 

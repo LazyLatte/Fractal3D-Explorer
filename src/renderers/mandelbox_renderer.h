@@ -14,6 +14,7 @@ class MandelboxRenderer: public Renderer {
     public:
         MandelboxRenderer(Mandelbox *mbox, unsigned height, unsigned width);
         void setUniformParameters() const override;
+        float DE(glm::vec3 p) const override;
 };
 
 

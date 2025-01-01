@@ -23,6 +23,7 @@ class Renderer {
         Renderer(const char *fs_filename, int height, int width);
         void setScene(Scene *scene);
         virtual void setUniformParameters() const = 0;
+        virtual float DE(glm::vec3 p) const = 0;
         void draw(float t) const;
 };
 #include "../scene.h"

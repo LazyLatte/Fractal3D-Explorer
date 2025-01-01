@@ -11,3 +11,7 @@ void MandelbulbRenderer::setUniformParameters() const {
 
     glUniform3fv(this->color_location, 1,  &(this->mbulb->color.r));
 }
+
+float MandelbulbRenderer::DE(glm::vec3 p) const {
+    return this->mbulb->DE(p);
+}

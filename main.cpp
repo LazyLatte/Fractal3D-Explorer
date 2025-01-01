@@ -24,6 +24,7 @@
 #include "renderers/mandelbox_renderer.h"
 #include "renderers/mandelbulb_renderer.h"
 #include "renderers/menger_renderer.h"
+#include "renderers/julia4D_renderer.h"
 #define deg2rad(x) ((x)*((3.1415926f)/(180.0f)))
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -35,12 +36,14 @@ void framebuffer_size_callback(GLFWwindow* window, int height, int width);
 Mandelbox *mbox;
 Mandelbulb *mbulb;
 Menger *menger;
+Julia4D *julia4d;
 MandelboxRenderer *mbox_renderer;
 MandelbulbRenderer *mbulb_renderer;
 MengerRenderer *menger_renderer;
+Julia4DRenderer *julia4d_renderer;
 Camera *camera;
 Scene *scene;
-const GLuint WIDTH = 640, HEIGHT = 360;
+const GLuint WIDTH = 1080, HEIGHT = 720;
 double cursor_prev_xpos, cursor_prev_ypos;
 int main(int argc, char** argv){
     glfwInit();
@@ -89,10 +92,12 @@ int main(int argc, char** argv){
     menger = new Menger();
     menger_renderer = new MengerRenderer(menger, HEIGHT, WIDTH);
 
+    julia4d = new Julia4D();
+    julia4d_renderer = new Julia4DRenderer(julia4d, HEIGHT, WIDTH);
     camera = new Camera(glm::vec3(0.0, 0.0, 4.0), glm::vec3(0.0, 0.0, -1.0));
     //scene = new Scene(mbox, camera, mbox_renderer);
     //scene = new Scene(mbulb, camera, mbulb_renderer);
-    scene = new Scene(menger, camera, menger_renderer);
+    scene = new Scene(camera, julia4d_renderer);
     float prevTime = 0.0;
     float curTime = -1.0f;
     while (!glfwWindowShouldClose(window)){
@@ -139,9 +144,11 @@ int main(int argc, char** argv){
     delete mbox;
     delete mbulb;
     delete menger;
+    delete julia4d;
     delete mbox_renderer;
     delete mbulb_renderer;
     delete menger_renderer;
+    delete julia4d_renderer;
     delete camera;
     delete scene;
 

@@ -2,7 +2,7 @@
 #define MANDELBOX_H
 #include "fractal.h"
 
-class Mandelbox: public Fractal {
+class Mandelbox: public Fractal3D {
     public:
         float scale;
         float minR;
@@ -22,7 +22,7 @@ class Mandelbox: public Fractal {
             for(int i=0; i<iter; i++){
                 v = glm::clamp(v, glm::vec3(-1.0), glm::vec3(1.0)) * 2.0f - v;
                 v *= this->fold;
-                r2 = dot(v, v);
+                r2 = glm::dot(v, v);
                 if(r2 < minRadius2){
                     float factor = fixedRadius2 / minRadius2;
                     v *= factor;
@@ -34,10 +34,10 @@ class Mandelbox: public Fractal {
                 }
 
                 v = c + this->scale * v;
-                dr = dr * abs(this->scale) + 1.0;
+                dr = dr * glm::abs(this->scale) + 1.0f;
                 if(r2 > bailout2) break;
             }
-            return sqrt(r2) / abs(dr);
+            return glm::sqrt(r2) / glm::abs(dr);
         }
 };
 

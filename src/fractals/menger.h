@@ -3,7 +3,7 @@
 #include "fractal.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/rotate_vector.hpp>
-class Menger: public Fractal {
+class Menger: public Fractal3D {
     public:
         float xDeg;
         float yDeg;

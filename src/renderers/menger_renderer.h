@@ -15,6 +15,7 @@ class MengerRenderer: public Renderer {
     public:
         MengerRenderer(Menger *menger, unsigned height, unsigned width);
         void setUniformParameters() const override;
+        float DE(glm::vec3 p) const override;
 };
 
 
