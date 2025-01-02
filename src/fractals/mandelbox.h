@@ -3,14 +3,15 @@
 #include "fractal.h"
 
 class Mandelbox: public Fractal3D {
+    private:
+        static constexpr int iter = 16;
+        static constexpr float bailout2 = 64.0; 
     public:
         float scale;
         float minR;
         float fold;
         Mandelbox(): scale(-3.0f), minR(0.5f), fold(1.0f){}
         float DE(glm::vec3 p) const override {
-            const int iter = 16;
-            const float bailout2 = 64.0; 
             float minRadius2 = this->minR * this->minR;
             float fixedRadius2 = 1.0;
             
@@ -19,7 +20,7 @@ class Mandelbox: public Fractal3D {
             float dr = 1.0;
             float r2;  
 
-            for(int i=0; i<iter; i++){
+            for(int i=0; i<Mandelbox::iter; i++){
                 v = glm::clamp(v, glm::vec3(-1.0), glm::vec3(1.0)) * 2.0f - v;
                 v *= this->fold;
                 r2 = glm::dot(v, v);
@@ -35,7 +36,7 @@ class Mandelbox: public Fractal3D {
 
                 v = c + this->scale * v;
                 dr = dr * glm::abs(this->scale) + 1.0f;
-                if(r2 > bailout2) break;
+                if(r2 > Mandelbox::bailout2) break;
             }
             return glm::sqrt(r2) / glm::abs(dr);
         }

@@ -21,6 +21,9 @@ class Scene {
             this->camera->speed = abs(this->renderer->DE(this->camera->getPos())) * 1.5f;
             
         }
+        void showUniformParametersUI(){
+            this->renderer->uniformParametersUI();
+        }
         Camera *getCamera() const {
             return this->camera;
         }

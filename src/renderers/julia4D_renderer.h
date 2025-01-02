@@ -11,6 +11,7 @@ class Julia4DRenderer: public Renderer {
     public:
         Julia4DRenderer(Julia4D *julia4d, unsigned height, unsigned width);
         void setUniformParameters() const override;
+        void uniformParametersUI() const override;
         float DE(glm::vec3 p) const override;
 };
 

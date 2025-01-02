@@ -3,8 +3,7 @@ out vec4 fragColor;
 
 #define PI 3.14159265
 #define HALF_PI 1.570796
-#define MAX_ITER 32
-#define BAILOUT 2.0
+#define MAX_ITER 16
 #define RAY_STEP 100
 #define FOV 1.0
 #define FAR_PLANE 5.0
@@ -14,7 +13,7 @@ uniform vec2 iResolution;
 uniform vec3 pos;
 uniform vec3 front;
 uniform vec3 color_seed;
-const float ray_multiplier = 0.8;
+const float ray_multiplier = 1.0;
 
 uniform float xDeg;
 uniform float yDeg;
@@ -62,35 +61,24 @@ vec3 rotateZ(vec3 v, float deg){
     return rotateMatrix * v;
 }
 
-float sdBox(vec3 p, vec3 b){
-    vec3 d = abs(p) - b;
-    return length(max(d, 0.0)) + min(max(d.x, max(d.y,d.z)), 0.0);
-}
-
-const float scale = 3.0f;
-const vec3 offset = vec3(1.0f);
-vec2 DE(vec3 p) {
+vec2 DE(vec3 p){
+    const float scale = 2.0f;
+    const vec3 offset = vec3(1.0f);
     vec3 c = julia ? juliaOffset : vec3(0.0f);
     vec3 v = p;
-    float s = 1.0;
-    float trap = dot(v,v);
+    float trap = dot(v, v);
     for(int i=0; i<MAX_ITER; i++){
-        v = abs(v);  
-        if(v.x > BAILOUT || v.y > BAILOUT || v.z > BAILOUT) break;
-        if(v.x < v.y) v.xy = v.yx;
-        if(v.x < v.z) v.xz = v.zx;
-        if(v.y < v.z) v.yz = v.zy;
-        s *= scale;
-        v = v * scale - offset * (scale - 1.0);
-        float zVal = offset.z * (scale - 1.0);
-        if(v.z < -0.5 * zVal) v.z += zVal;
+        if(v.x+v.y<0.0f) v.xy = -v.yx; 
+        if(v.x+v.z<0.0f) v.xz = -v.zx;
+        if(v.y+v.z<0.0f) v.yz = -v.zy; 
+        v = v*scale - offset*(scale-1.0f);
         v = rotateX(v, xDeg);
         v = rotateY(v, yDeg);
         v = rotateZ(v, zDeg);
         v += c;
-        trap = min(trap, dot(v,v)); 
+        trap = min(dot(v, v), trap);
     }
-    return vec2(sdBox(v,vec3(1.0)) / s, sqrt(trap));
+    return vec2(length(v)* pow(scale, -float(MAX_ITER)), sqrt(trap));
 }
 
 vec3 palette(float t, vec3 d){

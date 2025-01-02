@@ -19,7 +19,7 @@ const float ray_multiplier = 0.8;
 uniform uint power;
 uniform float qk;
 uniform bool julia;
-uniform vec4 juliaOffset;
+uniform vec4 juliaOffset; // (w, x, y, z);
 
 const float gloss = 8.0;
 const vec3 lightColor = vec3(1.0);

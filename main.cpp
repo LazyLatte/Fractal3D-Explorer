@@ -5,7 +5,6 @@
 #include <cassert>
 #include <vector>
 
-#define GLM_FORCE_SWIZZLE
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -24,6 +23,7 @@
 #include "renderers/mandelbox_renderer.h"
 #include "renderers/mandelbulb_renderer.h"
 #include "renderers/menger_renderer.h"
+#include "renderers/sierpinski_renderer.h"
 #include "renderers/julia4D_renderer.h"
 #define deg2rad(x) ((x)*((3.1415926f)/(180.0f)))
 
@@ -36,10 +36,12 @@ void framebuffer_size_callback(GLFWwindow* window, int height, int width);
 Mandelbox *mbox;
 Mandelbulb *mbulb;
 Menger *menger;
+Sierpinski *sierpinski;
 Julia4D *julia4d;
 MandelboxRenderer *mbox_renderer;
 MandelbulbRenderer *mbulb_renderer;
 MengerRenderer *menger_renderer;
+SierpinskiRenderer *sierpinski_renderer;
 Julia4DRenderer *julia4d_renderer;
 Camera *camera;
 Scene *scene;
@@ -92,12 +94,15 @@ int main(int argc, char** argv){
     menger = new Menger();
     menger_renderer = new MengerRenderer(menger, HEIGHT, WIDTH);
 
+    sierpinski = new Sierpinski();
+    sierpinski_renderer = new SierpinskiRenderer(sierpinski, HEIGHT, WIDTH);
+
     julia4d = new Julia4D();
     julia4d_renderer = new Julia4DRenderer(julia4d, HEIGHT, WIDTH);
     camera = new Camera(glm::vec3(0.0, 0.0, 4.0), glm::vec3(0.0, 0.0, -1.0));
     //scene = new Scene(mbox, camera, mbox_renderer);
     //scene = new Scene(mbulb, camera, mbulb_renderer);
-    scene = new Scene(camera, julia4d_renderer);
+    scene = new Scene(camera, sierpinski_renderer);
     float prevTime = 0.0;
     float curTime = -1.0f;
     while (!glfwWindowShouldClose(window)){
@@ -106,16 +111,7 @@ int main(int argc, char** argv){
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         {   
-            ImGui::SetNextWindowSize(ImVec2(300, 500));
-            ImGui::Begin("Setting", NULL);
-            ImGui::SliderFloat("scale", &mbox->scale, -3, 3);
-            ImGui::SliderFloat("minR", &mbox->minR, 0, 1);
-            ImGui::SliderFloat("fold",&mbox->fold, 0, 2);
-
-            ImGui::SliderFloat("r", &mbox->color.r, 0.0, 1.0);
-            ImGui::SliderFloat("g", &mbox->color.g, 0.0, 1.0);
-            ImGui::SliderFloat("b",&mbox->color.b, 0.0, 1.0);
-            ImGui::End();
+            scene->showUniformParametersUI();
         }
         
         glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -144,10 +140,12 @@ int main(int argc, char** argv){
     delete mbox;
     delete mbulb;
     delete menger;
+    delete sierpinski;
     delete julia4d;
     delete mbox_renderer;
     delete mbulb_renderer;
     delete menger_renderer;
+    delete sierpinski_renderer;
     delete julia4d_renderer;
     delete camera;
     delete scene;

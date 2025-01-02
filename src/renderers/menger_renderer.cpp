@@ -16,6 +16,24 @@ void MengerRenderer::setUniformParameters() const {
     glUniform3fv(this->color_location, 1,  &(this->menger->color.r));
 }
 
+void MengerRenderer::uniformParametersUI() const {
+    ImGui::SetNextWindowSize(ImVec2(300, 500));
+    ImGui::Begin("Setting", NULL);
+    ImGui::SliderFloat("xDeg", &this->menger->xDeg, 0.0f, 90.0f);
+    ImGui::SliderFloat("yDeg", &this->menger->yDeg, 0.0f, 90.0f);
+    ImGui::SliderFloat("zDeg",&this->menger->zDeg, 0.0f, 90.0f);
+
+    ImGui::Checkbox("julia", &this->menger->julia);
+    ImGui::SliderFloat("x-julia", &this->menger->juliaOffset.x, -2.0f, 2.0f);
+    ImGui::SliderFloat("y-julia", &this->menger->juliaOffset.y, -2.0f, 2.0f);
+    ImGui::SliderFloat("z-julia", &this->menger->juliaOffset.z, -2.0f, 2.0f);
+
+    ImGui::SliderFloat("r", &this->menger->color.r, 0.0, 1.0);
+    ImGui::SliderFloat("g", &this->menger->color.g, 0.0, 1.0);
+    ImGui::SliderFloat("b",&this->menger->color.b, 0.0, 1.0);
+    ImGui::End();
+}
+
 float MengerRenderer::DE(glm::vec3 p) const {
     return this->menger->DE(p);
 }
