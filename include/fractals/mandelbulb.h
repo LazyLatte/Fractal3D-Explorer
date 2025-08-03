@@ -1,5 +1,4 @@
-#ifndef MANDELBULB_H
-#define MANDELBULB_H
+#pragma once
 #include "fractal.h"
 
 class Mandelbulb: public Fractal3D {
@@ -7,10 +6,15 @@ class Mandelbulb: public Fractal3D {
         static constexpr int iter = 9;
         static constexpr float bailout = 2.0f;
     public:
-        float power;
-        Mandelbulb(): power(8.0f){}
+        Mandelbulb(){
+            this->params["power"].value = MANDELBULB_POWER_DEFAULT_VALUE;
+            this->params["power"].min = MANDELBULB_POWER_MIN_VALUE;
+            this->params["power"].max = MANDELBULB_POWER_MAX_VALUE;
+        }
+
         float DE(glm::vec3 p) const override {
-            glm::vec3 c = this->julia ? this->juliaOffset : p;
+            float power = this->params.at("power").value;
+            glm::vec3 c = this->julia ? toVec3(this->juliaOffset) : p;
             glm::vec3 v = p;
             float dr = 1.0f;             
             float r = glm::length(v);  
@@ -29,6 +33,6 @@ class Mandelbulb: public Fractal3D {
             
             return 0.5f * glm::log(r) * r / dr;
         }
-};
 
-#endif /* MANDELBULB_H */
+        const char * getName() const override { return "MANDELBULB"; };
+};

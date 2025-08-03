@@ -1,0 +1,118 @@
+#version 430 core
+layout (local_size_x = 16, local_size_y = 16) in;
+
+layout (binding = 0, rgba16f) uniform image2D dstImage;
+
+layout (std140, binding = 0) uniform Camera { 
+    vec3 pos; 
+    vec3 front;
+};
+
+#define PI 3.14159265
+#define HALF_PI 1.570796
+#define MAX_ITER 24
+#define BAILOUT 2.0
+#define RAY_STEP 500
+#define FOV 1.0
+#define FAR_PLANE 10.0
+
+uniform vec3 color_seed;
+const float ray_multiplier = 0.8;
+
+float power = 8.0;
+uniform bool julia;
+uniform vec3 juliaOffset;
+
+const float gloss = 8.0;
+const vec3 lightColor = vec3(1.0);
+const float lightIntensity = 1.0f;
+
+vec2 DE(vec3 p) {
+    vec3 c = p;
+    vec3 v = p;
+    float dr = 1.0;             
+    float r = length(v);  
+    float trap = r;
+    
+    for (int i = 0; i < MAX_ITER; i++) {
+        float r_pow_n_minus_one = pow(r, power - 1.0);
+        float r_pow_n = r * r_pow_n_minus_one;
+        float theta = atan(v.y, v.x) * power;
+        float phi = asin(v.z / r) * power;
+        dr = power * r_pow_n_minus_one * dr + 1.0;
+        v = c + r_pow_n * vec3(cos(theta) * cos(phi), cos(phi) * sin(theta), -sin(phi));
+
+        trap = min(trap, r);
+        r = length(v);     
+        if (r > BAILOUT) break;  
+    }
+    
+    return vec2(0.5 * log(r) * r / dr, trap);
+}
+
+// vec2 DE( vec3 p0 ){
+//     vec4 p = vec4(p0, 1.);
+//     float trap = length(p.xyz);
+//     for(int i = 0; i < 8; i++){
+//         p.xyz = mod(p.xyz-1.,2.)-1.;
+//         p*=1.4/dot(p.xyz,p.xyz);
+
+//         trap = min(trap, length(p.xyz));
+//     }
+//     return vec2(length(p.xz/p.w)*0.25, trap);
+// }
+
+vec3 palette(float t, vec3 d){
+    vec3 a = vec3(0.25);
+    vec3 b = vec3(0.25);
+    vec3 c = vec3(0.5);
+    return a + b * cos(2.0 * PI * (c * t + d));
+}
+
+void main() {
+    ivec2 dstTexel = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 iResolution = imageSize(dstImage);
+
+    vec2 uv = (dstTexel * 2.0 - iResolution) / iResolution.y;
+    vec3 right = cross(front, vec3(0.0, 1.0, 0.0));
+    vec3 up = cross(right, front);
+    vec3 ray_dir = normalize(uv.x * right + uv.y * up + FOV * front);
+
+    float dist = 0.0;
+    float orbit = 0.0;
+    float eps;
+    for(int i=0; i<RAY_STEP; i++){
+        vec2 map = DE(pos + dist * ray_dir);
+        float est = map.x;
+        orbit = map.y;
+        eps = dist * 0.002f;
+        if(abs(est) < eps || dist > FAR_PLANE) break;
+        dist += est * ray_multiplier;
+    }
+
+    vec3 lightPos = pos;
+
+    vec3 color = vec3(0.0);
+    // if(dist > 0.0){
+    //     vec3 v = pos + dist * ray_dir;
+    //     vec3 N = normalize(vec3(
+    //         DE(v + vec3(eps, 0.0, 0.0))[0] - DE(v - vec3(eps, 0.0, 0.0))[0],
+    //         DE(v + vec3(0.0, eps, 0.0))[0] - DE(v - vec3(0.0, eps, 0.0))[0],
+    //         DE(v + vec3(0.0, 0.0, eps))[0] - DE(v - vec3(0.0, 0.0, eps))[0]
+    //     ));
+
+    //     vec3 L = normalize(lightPos - v);
+    //     vec3 H = normalize(L - ray_dir);
+
+    //     vec3 ambient = vec3((0.7f + 0.3f * N.y)* (0.2f + 0.8f * clamp(0.05f * log(orbit), 0.0f, 1.0f)));
+    //     vec3 diffuse = lightColor * clamp(dot(L, N), 0.0, 1.0);
+    //     vec3 specular = diffuse * pow(clamp(dot(H, N), 0.0, 1.0), gloss);
+        
+    //     color = palette(orbit, color_seed);
+
+    //     color *= (ambient + diffuse);
+    //     color += specular * 0.8f;
+    // }
+    color = vec3(orbit);
+    imageStore(dstImage, dstTexel, vec4(color, 1.0));
+}
